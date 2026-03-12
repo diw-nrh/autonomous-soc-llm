@@ -4,24 +4,15 @@ FastAPI Server หลักที่มีด่านตรวจ Middleware
 (คุณสามารถใช้ Burp Suite ยิงโจมตีที่นี่ได้เลย)
 """
 from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from agent import SOCAgent
-import json
-import threading
+import os
 
 app = FastAPI(title="🔒 API Endpoint Protected by Autonomous SOC")
  
 # โหลดผู้ช่วย SOC ทำงานเตรียมรอไว้เลย
 soc_agent = SOCAgent()
-LOG_FILE = "api_attacks.jsonl"
-
-def analyze_and_log(log_data: dict):
-    """ฟังก์ชันทำงานเบื้องหลัง: เซฟ Log ลงไฟล์ และส่งให้ AI วิเคราะห์"""
-    # 1. บันทึกเป็นไฟล์ (เผื่อทำ Dataset เทรนเพิ่มรอบหน้า)
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(json.dumps(log_data) + "\n")
-    
-    # 2. ป้อนให้ AI วิเคราะห์
-    soc_agent.analyze_request(log_data)
 
 
 @app.middleware("http")
@@ -30,12 +21,15 @@ async def soc_middleware(request: Request, call_next):
     ด่านตรวจ (Middleware): จะรวบรวมทุก Request (รวมถึงของ Burp Suite) 
     และแพ็กส่งไปให้ AI ทำงานตรวจสอบเบื้องหลัง (Background Thread)
     """
-    # ระวังปัญหา: Request body ถ้าถูกอ่านไปรอบนึงแล้วจะอ่านอีกไม่ได้ใน FastAPI
-    # เราจึงอ่านมันมาเก็บสแปร์ไว้ก่อน แล้วยัดคืนเข้าไป
+    # === Whitelist: Path ที่ไม่ต้องวิเคราะห์ (Internal SOC & Dashboard paths) ===
+    # เหตุผล: Dashboard polling /soc/dashboard ทุก 3 วิ ทำให้เกิด False Positive
+    SKIP_PATHS = {"/", "/soc/alerts", "/soc/dashboard", "/soc/logs", "/soc/logs/csv", "/dashboard", "/docs", "/openapi.json", "/favicon.ico", "/robots.txt"}
+    if request.url.path in SKIP_PATHS:
+        return await call_next(request)
+
     body_bytes = await request.body()
     body_str = body_bytes.decode('utf-8') if body_bytes else ""
     
-    # แพ็กข้อมูลเหมือนที่เทรน
     log_data = {
         "Method": request.method,
         "URL": str(request.url),
@@ -43,11 +37,12 @@ async def soc_middleware(request: Request, call_next):
         "User-Agent": request.headers.get("user-agent", "")
     }
 
-    # เพื่อไม่ให้ API ค้างรอ AI วิเคราะห์จน timeout เราจะใช้ Thread ยิงงานไปให้ AI ด้านหลัง
-    threading.Thread(target=analyze_and_log, args=(log_data,)).start()
+    # Queue Worker จะรับงานไปวิเคราะห์ใน Background (Non-blocking)
+    soc_agent.analyze_request(log_data)
     
-    # ให้ Request ตัวจริงผ่านเข้าไประบบปกติ
     response = await call_next(request)
+    # บังคับ close connection ทุก response → Burp Suite และ HTTP client ได้ผลทันที
+    response.headers["Connection"] = "close"
     return response
 
 
@@ -87,7 +82,34 @@ def get_soc_alerts():
         "recent_alerts": soc_agent.get_recent_alerts()
     }
 
+@app.get("/soc/dashboard")
+def get_dashboard_stats():
+    """สถิติสำหรับ Dashboard อัพเดตทุก 3 วินาที"""
+    return soc_agent.get_dashboard_stats()
+
+@app.get("/soc/logs")
+def get_recent_logs(limit: int = 50):
+    """ดึง Log ล่าสุดสำหรับตาราง Live Feed"""
+    return {"logs": soc_agent.all_logs[-limit:]}
+
+@app.get("/soc/logs/csv")
+def download_logs_csv():
+    """Download log เป็นไฟล์ CSV"""
+    csv_path = os.path.join(os.path.dirname(__file__), "soc_log.csv")
+    if os.path.exists(csv_path):
+        return FileResponse(csv_path, media_type='text/csv', filename='soc_attacks_log.csv')
+    return {"error": "No log file found yet"}
+
+@app.get("/dashboard", response_class=HTMLResponse)
+def serve_dashboard():
+    """หน้า SOC Dashboard UI"""
+    html_path = os.path.join(os.path.dirname(__file__), "dashboard.html")
+    if os.path.exists(html_path):
+        with open(html_path, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h1>Dashboard not found</h1>")
+
 if __name__ == "__main__":
     import uvicorn
-    # รันเซิฟเวอร์ที่พอร์ต 8000
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    # reload=False เพื่อป้องกัน AI โหลดซ้ำทุกครั้งที่แก้ไฟล์ → OOM crash
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)

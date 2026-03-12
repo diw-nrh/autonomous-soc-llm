@@ -1,0 +1,154 @@
+timestamp,method,url,user_agent,status,attack_type,ai_analysis
+2026-03-12 20:47:13,GET,http://localhost:8000/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-12 20:47:13,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-12 20:47:13,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",Normal,Normal,## Task
+2026-03-12 20:47:19,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-12 20:54:45,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,SQLi,"## Malicious Traffic Detected **
+ 
+## Security Analysis:
+
+**Attack Type:** SQL Injection
+**Severity:** CRITICAL
+
+## Immediate Action Required:
+Block all sources from IP address [insert IP address here] immediately.
+
+## Reporting Requirements:
+Post this analysis to the SOC SOC Analysts team for further reviewevaluation"
+2026-03-12 20:54:50,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",Normal,Normal,##2
+2026-03-12 20:54:51,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,Other Attack,"## Bott1cha waist Psychic Lon properly-нев-óligne#php AldefQuestionQuestionQuestionQuestionThea is normal, no attack detected"
+2026-03-12 20:56:02,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,SQLi,"## Security Analysis
+
+**Malicious Activity Detected**
+
+This is a normal web application access request from a legitimate user agent.
+
+## Indicators of Compromise (IoC):
+- **Normal User Agent**: The user agent string indicates a standard browser configuration.
+- **No Malicious Payloads**: No SQL injection patterns, cross-site scripting (XSS), XML external (XX**Action Required**
+- We!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+2026-03-12 20:56:32,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,Normal,##=1
+2026-03-12 20:56:35,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,SQLi,"## Security Analysis
+
+**Malicious Activity Detected**
+
+This is a normal web application access request from a legitimate user agent.
+
+## Indicators of Compromise (IoC):
+- **Normal User Agent**: The user agent string indicates normal browser usage patterns.
+- **No Malicious Payloads**: No SQL injection, cross-site scripting (XSS), XML external entity (XXE), remote code execution (RCE), or brute-force attack detected.
+
+## Action Required## 
+Normal traffic."
+2026-03-12 20:56:36,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,Other Attack,"## Security Analysis
+
+De with no content to analyze — no attack detected"
+2026-03-12 21:11:32,GET,http://localhost:8000/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-12 21:11:37,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,SQLi,"## Security Analysis
+
+**Malicious Activity Detected**
+
+This is a normal web application access request from a legitimate user agent.
+
+## Indicators of Compromise (IoC):
+- **Normal User Agent**: The user agent string indicates a standard browser configuration.
+- **No Malicious Payloads**: No SQL injection patterns, cross-site scripting (XSS), XML external entity (XXE), remote code execution"
+2026-03-12 21:11:41,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,SQLi,"## Security Analysis
+
+**Malicious Activity Detected**
+
+This is a normal web application access request from a legitimate user agent.
+
+## Indicators of Compromise (IoC):
+- **Normal User Agent**: The user agent string indicates a standard browser configuration.
+- **No Malicious Payloads**: No SQL injection patterns, cross-site scripting (XSS), XML external entity (XXE), remote code execution"
+2026-03-12 21:11:45,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,SQLi,"## Security Analysis
+
+**Malicious Activity Detected**
+
+This is a normal web application access request from a legitimate user agent.
+
+## Indicators of Compromise (IoC):
+- **Normal User Agent**: The user agent string indicates a standard browser configuration.
+- **No Malicious Payloads**: No SQL injection patterns, cross-site scripting (XSS), XML external entity (XXE), remote code execution"
+2026-03-12 21:11:50,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,SQLi,"## Security Analysis
+
+**Malicious Activity Detected**
+
+This is a normal web application access request from a legitimate user agent.
+
+## Indicators of Compromise (IoC):
+- **Normal User Agent**: The user agent string indicates a standard browser configuration.
+- **No Malicious Payloads**: No SQL injection patterns, cross-site scripting (XSS), XML external entity (XXE), remote code execution"
+2026-03-12 21:11:54,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,SQLi,"## Security Analysis
+
+**Malicious Activity Detected**
+
+This is a normal web application access request from a legitimate user agent.
+
+## Indicators of Compromise (IoC):
+- **Normal User Agent**: The user agent string indicates a standard browser configuration.
+- **No Malicious Payloads**: No SQL injection patterns, cross-site scripting (XSS), XML external entity (XXE), remote code execution"
+2026-03-12 21:11:59,GET,http://localhost:8000/soc/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,SQLi,"## Security Analysis
+
+**Malicious Activity Detected**
+
+This is a normal web application access request from a legitimate user agent.
+
+## Indicators of Compromise (IoC):
+- **Normal User Agent**: The user agent string indicates a standard browser configuration.
+- **No Malicious Payloads**: No SQL injection patterns, cross-site scripting (XSS), XML external entity (XXE), remote code execution"
+2026-03-12 21:27:31,GET,http://localhost:8000/favicon.ico,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",ALERT,Other Attack,"## Security Analysis
+
+**Malicious Activity Detected**
+
+This is a classic case of a favicon attack. Malicious actors often use these small icons to hide their true intentions behind legitimate-looking URLs.
+
+**Attack Vector:** Favicon Injection
+
+**Severity:** HIGH
+**Action Required:** BLOCK + INVESTIGATION"
+2026-03-12 21:38:41,POST,http://127.0.0.1:8000/api/v1/login,,ALERT,SQLi,"**Malicious Traffic Detected**
+
+This is a classic SQL injection attack. The 'group by' clause will return all users with the same username, effectively allowing an attacker to bypass authentication.
+
+**Attack Vector:** SQL Injection
+
+**Severity:** CRITICAL
+**Action Required:** Block source IP immediately & escalate to Tier 2 SOC analyst"
+2026-03-12 22:51:27,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**MALICIOUS TRAFFIC DETECTED**
+
+This is a classic SQL injection attack pattern using the OR operator to always return true. The attack uses multiple single quotes and bitwise operators to create a complex expression that will always evaluate to true.
+
+**Attack Details:**
+- Malicious payload: `admin' OR 'a'='a` -- always returns true
+- Attack vector: OR operator"
+2026-03-12 22:52:17,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**MALICIOUS TRAFFIC DETECTED**
+
+This is a classic SQL injection attack pattern using the OR operator to always return true. The attack uses multiple single quotes and bitwise operators to create a complex expression that will always evaluate to true.
+
+**Attack Details:**
+- Malicious payload: `admin' OR 'a'='a` -- always returns true
+- Attack vector: OR operator"
+2026-03-12 22:52:38,POST,http://127.0.0.1:8000/api/v1/login,,ALERT,SQLi,"**Malicious Traffic Detected**
+
+This is a classic SQL injection attack. The 'group by' clause will return all users with the same username, effectively allowing an attacker to bypass authentication.
+
+**Attack Vector:** SQL Injection
+
+**Severity:** CRITICAL
+**Action Required:** Block source IP immediately & escalate to Tier 2 SOC analyst"
+2026-03-12 22:54:41,POST,http://127.0.0.1:8000/api/v1/login,,Normal,Normal,Normal traffic
+2026-03-12 23:13:06,GET,http://localhost:8000/api/v1/search?q=1%27%20OR%201=1,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**Malicious Traffic Detected**
+
+This is a SQL injection attack using the OR operator to always return true, making all records match the query.
+
+**Attack Vector:** SQLi
+**Severity:** Critical
+
+**Recommendations:**
+- Block source IP immediately
+- Escalate to Tier 2 SOC analyst
+- Apply WAF rule to block this pattern
+- Review application code for vulnerability"
+2026-03-12 23:13:07,POST,http://127.0.0.1:8000/api/v1/login,,Normal,Normal,Normal traffic

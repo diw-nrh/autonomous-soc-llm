@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🛡️ Autonomous SOC — Blue Team Operations Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* ===== ROOT VARIABLES ===== */
+    :root {
+      --navy-900: #010a14;
+      --navy-800: #020d1a;
+      --navy-700: #041524;
+      --navy-600: #061e30;
+      --navy-500: #0a2840;
+      --cyan-bright: #00e5ff;
+      --cyan-mid: #00b4cc;
+      --cyan-dim: #00637a;
+      --blue-electric: #0066ff;
+      --blue-soft: #1a3a6e;
+      --green-hud: #00ff88;
+      --red-alert: #ff2244;
+      --amber-warn: #ffaa00;
+      --purple-accent: #9b59ff;
+      --text-primary: #cce8f4;
+      --text-bright: #e8f8ff;
+      --text-muted: #3a7a96;
+      --text-dim: #1e4a5f;
+      --border-cyan: rgba(0, 229, 255, 0.2);
+      --border-bright: rgba(0, 229, 255, 0.5);
+      --glow-cyan: 0 0 20px rgba(0, 229, 255, 0.4), 0 0 60px rgba(0, 229, 255, 0.15);
+      --glow-red: 0 0 20px rgba(255, 34, 68, 0.5), 0 0 50px rgba(255, 34, 68, 0.2);
+      --glow-green: 0 0 15px rgba(0, 255, 136, 0.4);
+    }
+
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--navy-900);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ===== ANIMATED BACKGROUND ===== */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        linear-gradient(rgba(0, 180, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 180, 255, 0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gridPan 60s linear infinite;
+      pointer-events: none; z-index: 0;
+    }
+    @keyframes gridPan {
+      0% { background-position: 0 0; }
+      100% { background-position: 50px 50px; }
+    }
+
+    /* Scanline overlay */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 229, 255, 0.015) 2px,
+        rgba(0, 229, 255, 0.015) 4px
+      );
+      pointer-events: none; z-index: 1;
+    }
+
+    /* Corner decoration */
+    .corner-decor {
+      position: fixed;
+      width: 120px; height: 120px;
+      pointer-events: none; z-index: 2;
+    }
+    .corner-decor.tl { top: 0; left: 0; border-top: 2px solid var(--cyan-mid); border-left: 2px solid var(--cyan-mid); }
+    .corner-decor.tr { top: 0; right: 0; border-top: 2px solid var(--cyan-mid); border-right: 2px solid var(--cyan-mid); }
+    .corner-decor.bl { bottom: 0; left: 0; border-bottom: 2px solid var(--cyan-mid); border-left: 2px solid var(--cyan-mid); }
+    .corner-decor.br { bottom: 0; right: 0; border-bottom: 2px solid var(--cyan-mid); border-right: 2px solid var(--cyan-mid); }
+
+    /* ===== LAYOUT ===== */
+    .page-wrap { position: relative; z-index: 3; min-height: 100vh; display: flex; flex-direction: column; }
+    .container { max-width: 1680px; margin: 0 auto; padding: 0 28px; }
+
+    /* ===== HEADER / HUD BAR ===== */
+    header {
+      background: linear-gradient(180deg, rgba(2,13,26,0.99) 0%, rgba(4,21,36,0.95) 100%);
+      border-bottom: 1px solid var(--border-cyan);
+      padding: 0;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 4px 40px rgba(0, 100, 180, 0.2);
+    }
+
+    /* Top HUD strip */
+    .hud-strip {
+      background: rgba(0, 229, 255, 0.05);
+      border-bottom: 1px solid rgba(0, 229, 255, 0.1);
+      padding: 5px 28px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .hud-strip span { letter-spacing: 0.8px; }
+    .hud-strip .blink { animation: blink 1.2s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    .header-main {
+      padding: 14px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .logo-shield {
+      width: 52px; height: 52px;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-shield::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--cyan-bright) 0%, var(--blue-electric) 100%);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      opacity: 0.2;
+      animation: shieldPulse 3s ease-in-out infinite;
+    }
+    @keyframes shieldPulse { 0%,100%{opacity:0.2} 50%{opacity:0.4} }
+    .logo-shield-inner {
+      font-size: 24px; z-index: 1;
+      filter: drop-shadow(0 0 8px var(--cyan-bright));
+    }
+    .logo-text { line-height: 1.1; }
+    .logo-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px; font-weight: 700;
+      color: var(--cyan-bright);
+      letter-spacing: 2px;
+      text-shadow: var(--glow-cyan);
+    }
+    .logo-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--text-muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Header nav cluster */
+    .header-right { display: flex; align-items: center; gap: 14px; }
+
+    .status-badge {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0, 255, 136, 0.07);
+      border: 1px solid rgba(0, 255, 136, 0.25);
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; color: var(--green-hud);
+      letter-spacing: 0.8px;
+    }
+    .pulse-dot {
+      width: 8px; height: 8px;
+      background: var(--green-hud);
+      border-radius: 50%;
+      box-shadow: var(--glow-green);
+      animation: pulseDot 1.5s ease-in-out infinite;
+    }
+    @keyframes pulseDot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.6} }
+
+    .btn-hud {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; letter-spacing: 1px;
+      padding: 9px 20px;
+      background: transparent;
+      border: 1px solid var(--border-bright);
+      color: var(--cyan-bright);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 8px;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-hud::before {
+      content: '';
+      position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.1), transparent);
+      transition: left 0.4s;
+    }
+    .btn-hud:hover { background: rgba(0,229,255,0.08); box-shadow: var(--glow-cyan); }
+    .btn-hud:hover::before { left: 100%; }
+
+    /* ===== SECTION LABEL ===== */
+    .section-label {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px; font-weight: 600;
+      color: var(--cyan-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1; height: 1px;
+      background: linear-gradient(90deg, var(--border-cyan), transparent);
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main { padding: 24px 0 48px; flex: 1; }
+
+    /* ===== STAT CARDS ===== */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .stat-card {
+      background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-800) 100%);
+      border: 1px solid var(--border-cyan);
+      border-radius: 4px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+      cursor: default;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, currentColor 0%, transparent 100%);
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute; bottom: 0; right: 0;
+      width: 80px; height: 80px;
+      background: radial-gradient(circle, currentColor 0%, transparent 70%);
+      opacity: 0.04;
+    }
+    .stat-card:hover {
+      border-color: var(--border-bright);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(0, 180, 255, 0.15);
+    }
+    .stat-card.cyan { color: var(--cyan-bright); }
+    .stat-card.red { color: var(--red-alert); border-color: rgba(255,34,68,0.25); }
+    .stat-card.red::before { background: linear-gradient(90deg, var(--red-alert), transparent); }
+    .stat-card.green { color: var(--green-hud); }
+    .stat-card.amber { color: var(--amber-warn); }
+
+    .stat-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .stat-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+    .stat-icon-hud {
+      width: 32px; height: 32px;
+      border: 1px solid currentColor;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      opacity: 0.6;
+    }
+    .stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 44px; font-weight: 900;
+      line-height: 1; letter-spacing: -1px;
+      text-shadow: 0 0 30px currentColor;
+    }
+    .stat-footer {
+      margin-top: 8px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; color: var(--text-dim);
+      letter-spacing: 1px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .stat-footer::before { content: '//'; color: var(--text-dim); }
+
+    /* ===== CHARTS SECTION ===== */
+    .charts-section {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .panel {
+      background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-800) 100%);
+      border: 1px solid var(--border-cyan);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-cyan);
+      background: rgba(0, 229, 255, 0.03);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px; font-weight: 600;
+      color: var(--cyan-bright);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .panel-title-icon {
+      width: 6px; height: 6px;
+      background: var(--cyan-bright);
+      border-radius: 50%;
+      box-shadow: var(--glow-cyan);
+    }
+    .panel-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; color: var(--text-muted);
+      letter-spacing: 1px;
+      background: rgba(0, 229, 255, 0.06);
+      border: 1px solid var(--border-cyan);
+      padding: 3px 8px; border-radius: 2px;
+    }
+    .panel-body { padding: 20px; }
+    .chart-wrap { height: 220px; position: relative; }
+
+    /* Attack type breakdown */
+    .attack-breakdown {
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 16px 20px;
+    }
+    .breakdown-row {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .breakdown-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; min-width: 110px; letter-spacing: 0.5px;
+    }
+    .breakdown-bar { flex: 1; height: 6px; background: var(--navy-600); border-radius: 2px; overflow: hidden; }
+    .breakdown-fill {
+      height: 100%; border-radius: 2px;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .breakdown-count {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; min-width: 30px; text-align: right;
+      font-weight: 600;
+    }
+    .bd-sqli { color: #ff6b35; } .bd-sqli .breakdown-fill { background: #ff6b35; }
+    .bd-xss  { color: #9b59ff; } .bd-xss  .breakdown-fill { background: #9b59ff; }
+    .bd-xxe  { color: #ffaa00; } .bd-xxe  .breakdown-fill { background: #ffaa00; }
+    .bd-rce  { color: #ffaa00; } .bd-rce  .breakdown-fill { background: #ffaa00; }
+    .bd-path { color: #00e5ff; } .bd-path .breakdown-fill { background: #00e5ff; }
+    .bd-normal{ color: var(--green-hud); } .bd-normal .breakdown-fill { background: var(--green-hud); }
+    .bd-other{ color: #3a7a96; } .bd-other .breakdown-fill { background: #3a7a96; }
+
+    /* Action buttons in table */
+    .btn-action {
+      background: rgba(0, 229, 255, 0.1);
+      border: 1px solid var(--border-cyan);
+      color: var(--cyan-bright);
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      background: var(--cyan-bright);
+      color: var(--navy-900);
+      box-shadow: var(--glow-cyan);
+    }
+
+    /* ===== LIVE FEED TABLE ===== */
+    .table-panel {
+      background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-800) 100%);
+      border: 1px solid var(--border-cyan);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+    .live-indicator {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--red-alert);
+    }
+    .feed-scroll { max-height: 320px; overflow-y: auto; }
+    .feed-scroll::-webkit-scrollbar { width: 5px; }
+    .feed-scroll::-webkit-scrollbar-track { background: var(--navy-800); }
+    .feed-scroll::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 2px; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr {
+      background: rgba(0, 229, 255, 0.05);
+      border-bottom: 1px solid var(--border-cyan);
+    }
+    thead th {
+      padding: 10px 16px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; letter-spacing: 1.5px;
+      text-align: left; color: var(--text-muted);
+      text-transform: uppercase; white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(0, 229, 255, 0.05);
+      transition: background 0.15s;
+      animation: rowSlide 0.35s ease;
+    }
+    @keyframes rowSlide { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+    tbody tr:hover { background: rgba(0, 229, 255, 0.04); }
+    tbody tr.tr-alert { background: rgba(255, 34, 68, 0.04); }
+    tbody tr.tr-alert:hover { background: rgba(255, 34, 68, 0.08); }
+    tbody td { padding: 10px 16px; font-size: 13px; }
+    .td-ts {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .td-method {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; font-weight: 700;
+    }
+    .td-url {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: #5a9fc0;
+      max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .status-hud {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px;
+      border-radius: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; letter-spacing: 1px; font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-hud.alert { background: rgba(255,34,68,0.12); border: 1px solid rgba(255,34,68,0.35); color: var(--red-alert); }
+    .status-hud.alert::before { content: '▲ '; font-size: 8px; }
+    .status-hud.normal { background: rgba(0,255,136,0.07); border: 1px solid rgba(0,255,136,0.2); color: var(--green-hud); }
+    .status-hud.normal::before { content: '◉ '; font-size: 8px; }
+    .type-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
+      padding: 3px 8px; border-radius: 2px;
+      border: 1px solid currentColor;
+      display: inline-block;
+    }
+
+    /* ===== AI ANALYST PANEL ===== */
+    .ai-section {
+      background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-800) 100%);
+      border: 1px solid var(--border-cyan);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .ai-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-cyan);
+      background: rgba(0, 100, 200, 0.08);
+      display: flex; align-items: center; gap: 14px;
+    }
+    .ai-icon {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(0,100,255,0.2));
+      border: 1px solid var(--border-bright);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .ai-icon::after {
+      content: '';
+      position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: linear-gradient(transparent 0%, rgba(0,229,255,0.06) 50%, transparent 100%);
+      animation: aiScan 3s linear infinite;
+    }
+    @keyframes aiScan { from { transform: translateY(-50%); } to { transform: translateY(50%); } }
+    .ai-meta { flex: 1; }
+    .ai-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px; font-weight: 700;
+      color: var(--cyan-bright); letter-spacing: 1.5px;
+      text-shadow: 0 0 10px var(--cyan-bright);
+    }
+    .ai-desc {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; color: var(--text-muted);
+      letter-spacing: 0.8px; margin-top: 3px;
+    }
+    .ai-status {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; letter-spacing: 0.8px;
+      color: var(--green-hud);
+    }
+
+    .ai-log { max-height: 280px; overflow-y: auto; padding: 14px 20px; display: flex; flex-direction: column; gap: 10px; }
+    .ai-log::-webkit-scrollbar { width: 5px; }
+    .ai-log::-webkit-scrollbar-thumb { background: var(--cyan-dim); border-radius: 2px; }
+    .ai-entry {
+      background: rgba(0, 10, 20, 0.6);
+      border: 1px solid var(--border-cyan);
+      border-left: 3px solid;
+      border-radius: 2px;
+      padding: 12px 14px;
+      animation: entryIn 0.4s ease;
+    }
+    @keyframes entryIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .ai-entry.entry-alert { border-left-color: var(--red-alert); box-shadow: inset 4px 0 20px rgba(255,34,68,0.05); }
+    .ai-entry.entry-normal { border-left-color: var(--green-hud); }
+    .ai-entry-top {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 8px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; color: var(--text-muted);
+      letter-spacing: 0.8px;
+    }
+    .ai-entry-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px; line-height: 1.65;
+      color: var(--text-primary);
+    }
+    .ai-empty-state {
+      text-align: center; padding: 40px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+    .ai-empty-state::before { content: '// '; }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0, 5, 15, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 999; align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: var(--navy-700);
+      border: 1px solid var(--border-bright);
+      border-radius: 4px;
+      padding: 36px;
+      max-width: 440px; width: 90%;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 60px rgba(0,229,255,0.1);
+      animation: modalIn 0.3s ease;
+      position: relative; overflow: hidden;
+    }
+    .modal-box::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan-bright), transparent);
+    }
+    @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(-10px); } to { opacity: 1; transform: none; } }
+    .modal-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+    .modal-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px; font-weight: 700; color: var(--cyan-bright);
+      letter-spacing: 2px; margin-bottom: 12px;
+    }
+    .modal-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 28px; }
+    .modal-actions { display: flex; gap: 12px; justify-content: center; }
+    .btn-modal {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; letter-spacing: 1px;
+      padding: 10px 24px; border-radius: 2px;
+      cursor: pointer; transition: all 0.2s;
+      border: 1px solid; text-transform: uppercase;
+    }
+    .btn-cancel { border-color: var(--text-dim); color: var(--text-muted); background: transparent; }
+    .btn-cancel:hover { border-color: var(--text-muted); color: var(--text-primary); }
+    .btn-download {
+      border-color: var(--cyan-bright); color: var(--navy-900);
+      background: var(--cyan-bright);
+      box-shadow: var(--glow-cyan);
+    }
+    .btn-download:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,255,0.5); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1200px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .charts-section { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .hud-strip { display: none; }
+      .header-right .status-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Corner decorations -->
+  <div class="corner-decor tl"></div>
+  <div class="corner-decor tr"></div>
+  <div class="corner-decor bl"></div>
+  <div class="corner-decor br"></div>
+
+  <div class="page-wrap">
+    <!-- ===== HEADER ===== -->
+    <header>
+      <div class="hud-strip">
+        <span>SYSTEM: AUTONOMOUS-SOC-V1 // BLUE TEAM OPERATIONS // THREAT INTEL ACTIVE</span>
+        <span id="hud-clock" class="blink">--:--:--</span>
+        <span>CLEARANCE: LEVEL-5 // ENCRYPTED CHANNEL // TLS 1.3</span>
+      </div>
+      <div class="header-main">
+        <div class="logo">
+          <div class="logo-shield">
+            <div class="logo-shield-inner">🛡️</div>
+          </div>
+          <div class="logo-text">
+            <div class="logo-title">SOC OPERATIONS CENTER</div>
+            <div class="logo-sub">AUTONOMOUS AI THREAT DETECTION // LLAMA 3.2 + FINE-TUNE + RAG</div>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="status-badge">
+            <div class="pulse-dot"></div>
+            AI ANALYST ONLINE
+          </div>
+          <button class="btn-hud" onclick="showSaveModal()">
+            ▾ EXPORT CSV LOG
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main>
+      <div class="container">
+
+        <!-- Stat Cards -->
+        <div class="section-label">THREAT INTELLIGENCE METRICS</div>
+        <div class="stats-row">
+          <div class="stat-card cyan">
+            <div class="stat-top">
+              <div class="stat-label">TOTAL MONITORED</div>
+              <div class="stat-icon-hud">📡</div>
+            </div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-footer">REQUESTS INSPECTED</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-top">
+              <div class="stat-label">THREATS DETECTED</div>
+              <div class="stat-icon-hud">⚠</div>
+            </div>
+            <div class="stat-value" id="stat-attacks">0</div>
+            <div class="stat-footer">ACTIVE ALERTS</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-top">
+              <div class="stat-label">CLEAN TRAFFIC</div>
+              <div class="stat-icon-hud">✓</div>
+            </div>
+            <div class="stat-value" id="stat-normal">0</div>
+            <div class="stat-footer">NORMAL REQUESTS</div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-top">
+              <div class="stat-label">DETECTION RATE</div>
+              <div class="stat-icon-hud">◎</div>
+            </div>
+            <div class="stat-value" id="stat-rate">--</div>
+            <div class="stat-footer">AI CONFIDENCE SCORE</div>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="section-label">TACTICAL OVERVIEW</div>
+        <div class="charts-section">
+          <!-- Donut -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><div class="panel-title-icon"></div>TRAFFIC COMPOSITION</div>
+              <div class="panel-tag">LIVE</div>
+            </div>
+            <div class="panel-body">
+              <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+            </div>
+          </div>
+
+          <!-- Attack Breakdown -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><div class="panel-title-icon"></div>ATTACK VECTOR ANALYSIS</div>
+              <div class="panel-tag">CLASSIFIED</div>
+            </div>
+            <div class="attack-breakdown" id="attack-breakdown">
+              <div style="text-align:center;color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:11px;padding:20px 0">
+                // AWAITING THREAT DATA...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Feed -->
+        <div class="section-label">LIVE REQUEST INTERCEPTOR</div>
+        <div class="table-panel">
+          <div class="panel-header">
+            <div class="panel-title"><div class="panel-title-icon"></div>TRAFFIC FEED — ALL ENDPOINTS</div>
+            <div class="live-indicator">
+              <div class="pulse-dot"></div>LIVE INTERCEPT
+            </div>
+          </div>
+          <div class="feed-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>TIMESTAMP</th>
+                  <th>METHOD</th>
+                  <th>ENDPOINT</th>
+                  <th>STATUS</th>
+                  <th>THREAT CLASS</th>
+                  <th style="text-align:right">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="log-table-body">
+                <tr><td colspan="6" style="text-align:center;padding:30px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-dim)">// WAITING FOR INCOMING TRAFFIC...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- AI Analyst -->
+        <div class="section-label">AI SOC ANALYST REPORTS</div>
+        <div class="ai-section">
+          <div class="ai-header">
+            <div class="ai-icon">🤖</div>
+            <div class="ai-meta">
+              <div class="ai-name">LLAMA-3.2-3B-SOC // FINE-TUNED + RAG AUGMENTED</div>
+              <div class="ai-desc">REAL-TIME THREAT ANALYSIS // BLUE TEAM OPERATIONS // UNSLOTH ACCELERATED</div>
+            </div>
+            <div class="ai-status">
+              <div class="pulse-dot"></div>PROCESSING
+            </div>
+          </div>
+          <div class="ai-log" id="ai-messages">
+            <div class="ai-empty-state">ANALYST MONITORING ACTIVE. THREAT EVENTS WILL APPEAR HERE.</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Save Modal -->
+  <div class="modal-overlay" id="saveModal">
+    <div class="modal-box">
+      <span class="modal-icon">📁</span>
+      <div class="modal-title">EXPORT LOG DATA</div>
+      <p class="modal-desc">Export complete time-series attack log as CSV.<br>Includes timestamps, threat classes, AI analysis, and endpoint data.</p>
+      <div class="modal-actions">
+        <button class="btn-modal btn-cancel" onclick="hideSaveModal()">CANCEL</button>
+        <button class="btn-modal btn-download" onclick="downloadCSV()">DOWNLOAD</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Analysis Modal -->
+  <div class="modal-overlay" id="analysisModal">
+    <div class="modal-box" style="max-width: 800px; text-align: left;">
+      <div class="panel-header" style="margin: -36px -36px 20px -36px; border-bottom: 1px solid var(--border-cyan);">
+        <div class="panel-title"><div class="panel-title-icon"></div>AI THREAT ANALYSIS REPORT</div>
+        <button onclick="hideAnalysisModal()" class="btn-hud" style="padding: 4px 10px; font-size: 10px;">CLOSE [X]</button>
+      </div>
+      <div id="analysis-content" class="ai-entry-text" style="font-size: 14px; white-space: pre-wrap; max-height: 500px; overflow-y: auto; padding-right: 10px; color: var(--text-bright);">
+        <!-- Content injected here -->
+      </div>
+    </div>
+  </div>
+
+<script>
+  // === CONFIG ===
+  const API = window.location.origin;
+  const REFRESH = 3000;
+
+  // === CLOCK ===
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('hud-clock').textContent =
+      now.toLocaleTimeString('en-US', { hour12: false }) + ' ICT';
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // === COLORS ===
+  const TYPE_COLORS = {
+    SQLi: '#ff6b35', XSS: '#9b59ff', XXE: '#ffaa00',
+    Suspicious: '#ffaa00', 'Path Traversal': '#00e5ff',
+    'Brute Force': '#00ff88', 'Other Attack': '#3a7a96', Normal: '#00ff88'
+  };
+
+  // === CHART: DONUT ===
+  const donut = new Chart(document.getElementById('donutChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Threats', 'Clean'],
+      datasets: [{
+        data: [0.001, 1],
+        backgroundColor: ['#ff2244', '#00ff88'],
+        borderColor: '#041524', borderWidth: 4, hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '70%',
+      plugins: {
+        legend: { labels: { color: '#3a7a96', font: { family: 'Share Tech Mono', size: 12 }, padding: 20 } }
+      }
+    }
+  });
+
+  // === BREAKDOWN BARS ===
+  function renderBreakdown(types) {
+    const el = document.getElementById('attack-breakdown');
+    const entries = Object.entries(types);
+    if (!entries.length) {
+      el.innerHTML = '<div style="text-align:center;color:var(--text-dim);font-family:\'Share Tech Mono\',monospace;font-size:11px;padding:20px 0">// NO THREAT DATA</div>';
+      return;
+    }
+    const max = Math.max(...Object.values(types), 1);
+    const classMap = { SQLi:'sqli', XSS:'xss', XXE:'xxe', Suspicious:'rce', 'Path Traversal':'path', Normal:'normal' };
+    
+    // เรียงลำดับเอา Normal ไว้ล่างสุด หรือไว้ที่ๆ เหมาะสม (เช่น เรียงตามจำนวน)
+    const sorted = entries.sort((a, b) => b[1] - a[1]);
+
+    el.innerHTML = sorted.map(([type, count]) => {
+      const pct = Math.round((count / max) * 100);
+      const cls = classMap[type] || 'other';
+      const color = TYPE_COLORS[type] || '#3a7a96';
+      return `<div class="breakdown-row bd-${cls}">
+        <div class="breakdown-label">${type}</div>
+        <div class="breakdown-bar"><div class="breakdown-fill" style="width:${pct}%;background:${color}"></div></div>
+        <div class="breakdown-count">${count}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // === TABLE ===
+  let lastLogLen = 0;
+  let currentLogs = [];
+  function renderTable(logs) {
+    if (logs.length === lastLogLen) return;
+    lastLogLen = logs.length;
+    currentLogs = [...logs].reverse();
+    const tbody = document.getElementById('log-table-body');
+    const methodColors = { GET: '#00e5ff', POST: '#ffaa00', DELETE: '#ff2244', PUT: '#9b59ff' };
+    tbody.innerHTML = currentLogs.map((r, idx) => {
+      const isAlert = r.status === 'ALERT';
+      const mc = methodColors[r.method] || '#3a7a96';
+      const tc = TYPE_COLORS[r.attack_type] || '#3a7a96';
+      const ts = r.timestamp ? r.timestamp.split(' ')[1] || r.timestamp : '--:--:--';
+      
+      const detailsBtn = isAlert ? `<button class="btn-action" onclick="showAnalysisModal(${idx})">DETAILS</button>` : '';
+
+      return `<tr class="${isAlert ? 'tr-alert' : ''}">
+        <td class="td-ts">${ts}</td>
+        <td class="td-method" style="color:${mc}">${r.method || 'GET'}</td>
+        <td class="td-url" title="${r.url}">${r.url || '-'}</td>
+        <td><span class="status-hud ${isAlert ? 'alert' : 'normal'}">${r.status}</span></td>
+        <td><span class="type-tag" style="color:${tc};border-color:${tc}44">${r.attack_type || 'NORMAL'}</span></td>
+        <td style="text-align:right">${detailsBtn}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function showAnalysisModal(index) {
+    const log = currentLogs[index];
+    if (!log || !log.ai_analysis) return;
+    document.getElementById('analysis-content').textContent = log.ai_analysis;
+    document.getElementById('analysisModal').classList.add('show');
+  }
+
+  function hideAnalysisModal() {
+    document.getElementById('analysisModal').classList.remove('show');
+  }
+
+  // === AI LOG ===
+  let lastAICount = 0;
+  function renderAI(logs) {
+    const attacks = logs.filter(l => l.status === 'ALERT' && l.ai_analysis).slice(-6).reverse();
+    if (attacks.length === lastAICount) return;
+    lastAICount = attacks.length;
+    const container = document.getElementById('ai-messages');
+    if (!attacks.length) { container.innerHTML = '<div class="ai-empty-state">ANALYST MONITORING ACTIVE. THREAT EVENTS WILL APPEAR HERE.</div>'; return; }
+    container.innerHTML = attacks.map(r => {
+      const tc = TYPE_COLORS[r.attack_type] || '#3a7a96';
+      const ts = r.timestamp ? r.timestamp.split(' ')[1] || r.timestamp : '';
+      return `<div class="ai-entry entry-alert">
+        <div class="ai-entry-top">
+          <span style="color:var(--red-alert)">▲ THREAT DETECTED</span>
+          <span>|</span>
+          <span>${ts}</span>
+          <span>|</span>
+          <span style="color:${tc}">[ ${r.attack_type} ]</span>
+          <span>|</span>
+          <span style="color:var(--text-dim)">${(r.method || 'GET')}</span>
+        </div>
+        <div class="ai-entry-text">${r.ai_analysis || 'Malicious request detected.'}</div>
+      </div>`;
+    }).join('');
+    container.scrollTop = 0;
+  }
+
+  // === MAIN FETCH ===
+  async function refresh() {
+    try {
+      const res = await fetch(`${API}/soc/dashboard`);
+      if (!res.ok) return;
+      const d = await res.json();
+      // Stats
+      const t = d.total_requests || 0, a = d.total_attacks || 0, n = d.total_normal || 0;
+      document.getElementById('stat-total').textContent = t;
+      document.getElementById('stat-attacks').textContent = a;
+      document.getElementById('stat-normal').textContent = n;
+      document.getElementById('stat-rate').textContent = t > 0 ? Math.round(a / t * 100) + '%' : '--';
+      // Charts
+      donut.data.datasets[0].data = [a || 0.001, n || 0.001];
+      donut.update('none');
+      renderBreakdown(d.attack_types || {});
+      renderTable(d.recent_logs || []);
+      renderAI(d.recent_logs || []);
+    } catch (e) { /* silently fail */ }
+  }
+
+  // === MODAL ===
+  function showSaveModal() { document.getElementById('saveModal').classList.add('show'); }
+  function hideSaveModal() { document.getElementById('saveModal').classList.remove('show'); }
+  function downloadCSV() { window.location.href = `${API}/soc/logs/csv`; hideSaveModal(); }
+  document.getElementById('saveModal').addEventListener('click', e => { if (e.target === e.currentTarget) hideSaveModal(); });
+  document.getElementById('analysisModal').addEventListener('click', e => { if (e.target === e.currentTarget) hideAnalysisModal(); });
+
+  // === INIT ===
+  refresh();
+  setInterval(refresh, REFRESH);
+</script>
+</body>
+</html>
