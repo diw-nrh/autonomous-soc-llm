@@ -61,3 +61,212 @@ SQL Injection: Blind SQLi - 'group by' tautology always returns true — 100% ma
 2026-03-13 20:36:54,POST,http://127.0.0.1:8000/api/v1/login,,ALERT,SQLi,"**ATTACK DETECTED**
 SQL Injection: Blind SQLi - 'group by' tautology always returns true — 100% malicious traffic"
 2026-03-13 20:37:45,GET,http://127.0.0.1:8000/api/v1/search?q=room1,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 20:44:24,POST,http://127.0.0.1:8000/api/v1/login,,ALERT,SQLi,"**ATTACK DETECTED**
+SQL Injection: OR-based tautology ('group by username having 1=1') always evaluates to true — always selects all rows"
+2026-03-13 20:48:51,GET,http://127.0.0.1:8000/abma/s,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**Attack Detected**
+**Severity**: CRITICAL
+**Classification**: ⚠️ SQLi-Blind: UNION-based attack detected
+
+**Technical Analysis**:
+Blind SQL Injection using UNION-based technique to bypass authentication — no visible output, but malicious payload executed on server-side
+
+**Indicators of Compromise (IoC)**:
+- Malicious pattern identified in API request parameters
+- Attack vector exploited via application vulnerability
+
+**Recommended Actions**:
+- Block source IP immediately
+- Escalate to Tier 2 SO"
+2026-03-13 20:49:25,GET,http://127.0.0.1:8000/abma,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+**SEVERITY**: CRITICAL
+**REASON**: Malicious API request detected for internal application 'abma' - potential SQL injection or XXE attack
+
+**ACTION REQUIRED**:
+Immediately block IP address 127.0.0.1 and escalate to Tier 2 SOC analyst for further investigation and action"
+2026-03-13 21:03:19,GET,http://127.0.0.1:8000/abma,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"Attack Detected
+
+**Severity**: CRITICAL
+**Classification**: ⚠️ SQLi DETECTED
+**Technical Analysis**: Malicious SQL injection payload found in URL parameter 'abma' — potential database taint
+
+**Indicators of Compromise (IoC)**:
+- Malicious payload identified in API request parameters
+- Attack pattern matches known SQLi signatures
+
+**Recommended Actions**:
+- Block source IP immediately
+- Escalate to Tier 2 SOC analyst
+- Apply WAF rule to block this pattern
+- Review application code for vulnerabili"
+2026-03-13 21:04:44,GET,http://127.0.0.1:8000/a,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:05:21,GET,http://127.0.0.1:8000/myroo,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:05:56,GET,http://127.0.0.1:8000/kukaka,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,"Attack Detected
+
+Severity: CRITICAL
+Classification: ⚠️ ATTACK DETECTED
+
+Reason: Malicious payload found in HTTP headers — XXE vulnerability exploited
+
+SIEM Rule Match: XXE_DETECTION
+Action Required: IMMEDIATE BLOCK + INCIDENT RESPONSE"
+2026-03-13 21:07:04,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+SQL Injection: OR-based tautology ('1'='1') always evaluates to True
+
+Method: GET | URL: http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271 | Status: 200 | Content:  | UA:"
+2026-03-13 21:07:17,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+SQL Injection: OR-based tautology ('1'='1') always evaluates to True
+
+Method: GET | URL: http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271 | Status: 200 | Content:  | UA:"
+2026-03-13 21:07:25,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+SQL Injection: OR-based tautology ('1'='1') always evaluates to True
+
+Method: GET | URL: http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271 | Status: 200 | Content:  | UA:"
+2026-03-13 21:07:30,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+SQL Injection: OR-based tautology ('1'='1') always evaluates to True
+
+Method: GET | URL: http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271 | Status: 200 | Content:  | UA:"
+2026-03-13 21:07:35,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+SQL Injection: OR-based tautology ('1'='1') always evaluates to True
+
+Method: GET | URL: http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271 | Status: 200 | Content:  | UA:"
+2026-03-13 21:07:42,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+SQL Injection: OR-based tautology ('1'='1') always evaluates to True
+
+**Severity**: CRITICAL
+**Classification**: ⚠️ ATTACK DETECTED
+
+**Technical Analysis**:
+OR-based tautology causes all records to be returned
+
+**Indicators of Compromise (IoC)**:
+- Malicious payload detected in API parameters
+- Attack pattern matches past database entries
+
+**Recommended Actions**:
+- Block source IP immediately
+- Escalate to Tier 2 SOC analyst
+- Apply WAF rule to block this pattern
+- Review ap"
+2026-03-13 21:13:26,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+Classification: SQLi
+Severity: Critical
+Explanation: SQL injection: OR operator chain
+Remediation: parameterized queries + OWASP ES6+ - use const params = new Set()"
+2026-03-13 21:13:50,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+Classification: SQLi
+Severity: Critical
+Explanation: SQL injection: OR operator chain
+Remediation: parameterized queries + OWASP ES6+ - use const params = new Set()"
+2026-03-13 21:13:55,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+Classification: SQLi
+Severity: Critical
+Explanation: SQL injection: OR operator chain
+Remediation: parameterized queries + OWASP ES6+ - use const params = new Set()"
+2026-03-13 21:13:59,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+Classification: SQLi
+Severity: Critical
+Explanation: SQL injection: OR operator chain
+Remediation: parameterized queries + OWASP ES6+ - use const params = new Set()"
+2026-03-13 21:14:05,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+Classification: SQLi
+Severity: Critical
+Explanation: SQL injection: OR operator chain
+Remediation: parameterized queries + OWASP ES6+ - use const params = new Set()"
+2026-03-13 21:14:12,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+Classification: SQLi
+Severity: Critical
+Explanation: SQL injection: OR operator chain
+Remediation: parameterized queries + OWASP ES6+ - use const params = new Set()"
+2026-03-13 21:14:15,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+Classification: SQLi
+Severity: Critical
+Explanation: SQL injection: OR operator chain
+Remediation: parameterized queries + OWASP ES6+ - use const params = new Set()"
+2026-03-13 21:14:18,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+Classification: SQLi
+Severity: Critical
+Explanation: SQL injection: OR operator chain
+Remediation: parameterized queries + OWASP ES6+ - use const params = new Set()"
+2026-03-13 21:17:25,GET,http://127.0.0.1:8000/api/v1/search?q='81dc9bdb52d04dc20036dbd8313ed055,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"Attack: SQL Injection — Malicious payload embedded in search query
+
+Severity: CRITICAL
+Classification: ⚠️ ATTACK DETECTED
+
+Explanation: SQL injection vulnerability exploited by injecting malicious payload '81dc9bdb52d04dc20036dbd8313ed055' into search query — immediate action required
+
+Remediation: Block source IP immediately & escalate to Tier 2 SOC analyst"
+2026-03-13 21:18:08,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,"Attack: XXE - External Entity Include
+Severity: Critical
+Classification: ⚠️ ATTACK DETECTED
+
+Explanation: XXE: external entity include in search query — loads external entities from file 'foo' — causes resource exhaustion and DoS
+
+Remediation: block source IP immediately — escalate to Tier 2 SOC analyst"
+2026-03-13 21:18:26,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,"Attack: XXE - External Entity Include
+Severity: Critical
+Classification: ⚠️ ATTACK DETECTED
+
+Explanation: XXE: external entity include in search query — loads external entities from file 'foo' — causes resource exhaustion and DoS
+
+Remediation: block source IP immediately — escalate to Tier 2 SOC analyst"
+2026-03-13 21:18:33,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,"Attack: XXE - External Entity Include
+Severity: Critical
+Classification: ⚠️ ATTACK DETECTED
+
+Explanation: XXE: external entity include in search query — loads external entities from file 'foo' — causes resource exhaustion and DoS
+
+Remediation: block source IP immediately — escalate to Tier 2 SOC analyst"
+2026-03-13 21:18:40,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,"Attack: XXE - External Entity Include
+Severity: Critical
+Classification: ⚠️ ATTACK DETECTED
+
+Explanation: XXE: external entity include in search query — loads external entities from file 'foo' — causes resource exhaustion and DoS
+
+Remediation: block source IP immediately — escalate to Tier 2 SOC analyst"
+2026-03-13 21:18:46,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,"Attack: XXE - External Entity Include
+Severity: Critical
+Classification: ⚠️ ATTACK DETECTED
+
+Explanation: XXE: external entity include in search query — loads external entities from file 'foo' — causes resource exhaustion and DoS
+
+Remediation: block source IP immediately — escalate to Tier 2 SOC analyst"
+2026-03-13 21:18:49,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,"Attack: XXE - External Entity Include
+Severity: Critical
+Classification: ⚠️ ATTACK DETECTED
+
+Explanation: XXE: external entity include in search query — loads external entities from file 'foo' — causes resource exhaustion and DoS
+
+Remediation: block source IP immediately — escalate to Tier 2 SOC analyst"
+2026-03-13 21:18:53,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,"Attack: XXE - External Entity Include
+Severity: Critical
+Classification: ⚠️ ATTACK DETECTED
+
+Explanation: XXE: external entity include in search query — loads external entities from file 'foo' — causes resource exhaustion and DoS
+
+Remediation: block source IP immediately — escalate to Tier 2 SOC analyst"
+2026-03-13 21:19:20,GET,http://127.0.0.1:8000/api/v1/search?q=room/man,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"Attack: SQL Injection
+Severity: Critical
+Classification: ⚠️ ATTACK DETECTED
+
+SQLi: room/man —> SQL injection vulnerability in search query
+
+Remediation: Block source IP immediately & escalate to Tier 2 SOC analyst"
+2026-03-13 21:19:23,GET,http://127.0.0.1:8000/api/v1/search?q=room/man,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"Attack: SQL Injection
+Severity: Critical
+Classification: ⚠️ ATTACK DETECTED
+
+SQLi: room/man —> SQL injection vulnerability in search query
+
+Remediation: Block source IP immediately & escalate to Tier 2 SOC analyst"
+2026-03-13 21:19:31,GET,http://127.0.0.1:8000/api/v1/search?q=room,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:19:32,GET,http://127.0.0.1:8000/api/v1/search?q=room,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:19:32,GET,http://127.0.0.1:8000/api/v1/search?q=room,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:19:32,GET,http://127.0.0.1:8000/api/v1/search?q=room,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:19:56,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:20:04,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:20:05,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:20:05,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:20:05,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:20:06,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:20:06,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:20:06,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic

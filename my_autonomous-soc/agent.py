@@ -157,6 +157,7 @@ class SOCAgent:
         log_text = (
             f"Method: {log_data.get('Method','')[:10]} | "
             f"URL: {log_data.get('URL','')[:200]} | "
+            f"Status: {log_data.get('Status-Code', 'Unknown')} | "
             f"Content: {log_data.get('content','')[:200]} | "
             f"UA: {log_data.get('User-Agent','')[:100]}"
         )
@@ -174,37 +175,26 @@ class SOCAgent:
             except Exception:
                 pass
 
-        # 3. Prompt - ปรับปรุงให้ AI ตอบละเอียดขึ้นตามที่เทรนมา
-        system_prompt = """You are an expert SOC (Security Operations Center) analyst specialized in:
-- SQL Injection (SQLi) detection: classic, blind, UNION-based, error-based, time-based, stacked queries
-- XXE (XML External Entity) injection detection: file disclosure, SSRF, OOB, DoS
-- XSS (Cross-Site Scripting) detection: reflected, stored, DOM-based, obfuscated
-- Remote Code Execution (RCE) and Command Injection detection
-- Path Traversal and Local File Inclusion (LFI) detection
-- OWASP Top 10 threat identification
-
-Analyze logs with precision. Always provide: attack classification, severity (CRITICAL/HIGH/MEDIUM/LOW/INFO), technical explanation, IoCs, and remediation steps.
+        # 3. Prompt - Optimized for speed and clarity
+        system_prompt = """Expert SOC Analyst. Analyze API logs for SQLi, XXE, XSS, RCE, LFI.
 RULES:
-1. If the log is harmless traffic, respond with "Normal traffic" and nothing else.
-2. If an attack is detected, you MUST provide a detailed security analysis report.
-3. Distinguish between XXE and Path Traversal. /etc/passwd is Path Traversal.
+1. If harmless or 404 on benign path, respond "Normal traffic".
+2. Use Status-Code for context.
+3. If attack, provide brief but precise: Classification, Severity, Explanation, Remediation.
 """
         prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 {system_prompt}
 {context}<|eot_id|><|start_header_id|>user<|end_header_id|>
-### Task:
-Analyze this API log:
-{log_text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+Analyze: {log_text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """
-        # 4. Inference (Unsloth Fast Mode — ปลอดภัยเพราะ Thread เดียว)
+        # 4. Inference (Greedy Decoding = Faster & More Stable)
         try:
             inputs = self.tokenizer(prompt, return_tensors="pt").to("cuda")
             with torch.no_grad():
                 outputs = self.model.generate(
                     **inputs,
-                    max_new_tokens=300,
-                    do_sample=True,
-                    temperature=0.1,
+                    max_new_tokens=250,      # Slightly reduced but still enough for detail
+                    do_sample=False,         # Greedy decoding for speed
                     pad_token_id=self.tokenizer.eos_token_id,
                     repetition_penalty=1.1,
                 )

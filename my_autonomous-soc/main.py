@@ -36,11 +36,13 @@ async def soc_middleware(request: Request, call_next):
         "content": body_str,
         "User-Agent": request.headers.get("user-agent", "")
     }
+    
+    response = await call_next(request)
+    log_data["Status-Code"] = response.status_code
 
     # Queue Worker จะรับงานไปวิเคราะห์ใน Background (Non-blocking)
     soc_agent.analyze_request(log_data)
     
-    response = await call_next(request)
     # บังคับ close connection ทุก response → Burp Suite และ HTTP client ได้ผลทันที
     response.headers["Connection"] = "close"
     return response
