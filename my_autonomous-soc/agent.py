@@ -23,7 +23,6 @@ sys.path.append(RESEARCH_DIR)
 try:
     from engine.vector_store import SOCVectorStore
     from unsloth import FastLanguageModel
-    import faiss
 except ImportError:
     print("⚠️  โมดูลบางตัวหายไป กรุณาติดตั้ง unsloth, faiss-cpu, torch")
 
@@ -40,20 +39,24 @@ def _ensure_csv_header():
             writer.writerow(["timestamp", "method", "url", "user_agent", "status", "attack_type", "ai_analysis"])
 
 def _detect_attack_type(url: str, content: str, ai_response: str) -> str:
-    """ตรวจจับประเภทการโจมตีจาก URL, Content และคำตอบของ AI"""
+    """ตรวจจับประเภทการโจมตีจาก URL, Content และคำตอบของ AI (พร้อมระบบกัน False Positive)"""
+    resp_upper = ai_response.upper()
+    
+    # ถ้า AI บอกชัดเจนว่าปกติ ไม่ต้องพยายามหา Keyword การโจมตี
+    if "NORMAL" in resp_upper or "NO ATTACK" in resp_upper or "LEGITIMATE" in resp_upper:
+        return "Normal"
+
     text = (url + " " + content + " " + ai_response).upper()
     if "SQLI" in text or "SQL INJECTION" in text or "UNION SELECT" in text or "OR 1=1" in text or "%27" in url:
         return "SQLi"
-    elif "XSS" in text or "CROSS-SITE" in text or "<SCRIPT" in text.replace("%3C","<"):
-        return "XSS"
     elif "XXE" in text or "XML EXTERNAL" in text or "DOCTYPE" in text or "ENTITY" in text:
         return "XXE"
+    elif "XSS" in text or "CROSS-SITE" in text or "<SCRIPT" in text.replace("%3C","<"):
+        return "XSS"
     elif "RCE" in text or "COMMAND INJECTION" in text or "REMOTE CODE" in text or "/ETC/PASSWD" in text:
         return "Suspicious"
     elif "PATH TRAVERSAL" in text or "DIRECTORY TRAVERSAL" in text or "../" in url or "..%2F" in url:
         return "Path Traversal"
-    elif "BRUTE FORCE" in text or "BRUTE" in text:
-        return "Brute Force"
     elif "ATTACK" in text or "MALICIOUS" in text or "INJECTION" in text:
         return "Other Attack"
     return "Normal"
@@ -159,14 +162,18 @@ class SOCAgent:
             except Exception:
                 pass
 
-        # 3. Prompt
+        # 3. Prompt - ปรับปรุงให้ AI ตอบสั้นและชัดเจนขึ้น เพื่อลดการพล่ามจนเกิด False Positive
         prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 You are an expert SOC analyst specialized in detecting API attacks (SQLi, XSS, XXE, RCE, Brute Force).
+RULES:
+1. If the log is harmless traffic (e.g. simple paths like /service, /old, /home), you MUST respond with "Normal traffic" and nothing else.
+2. If an attack is detected, start your response with "ATTACK: [Type]" followed by a brief analysis. 
+   Examples: "ATTACK: XXE", "ATTACK: SQLi", "ATTACK: XSS".
+3. Be strict: ignore common symbols unless they form a logical attack payload.
 {context}
 <|eot_id|><|start_header_id|>user<|end_header_id|>
 ### Task:
-Analyze this API log for security threats. Is it malicious or normal traffic?
-### Log/Input:
+Analyze this API log:
 {log_text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """
         # 4. Inference (Unsloth Fast Mode — ปลอดภัยเพราะ Thread เดียว)
@@ -187,15 +194,13 @@ Analyze this API log for security threats. Is it malicious or normal traffic?
             print(f"⚠️  Inference Error: {e}")
             return
 
-        # 5. จำแนกผลลัพธ์ — ลบ "1" in response ออกเพราะกว้างเกินไป ทำ False Positive ได้
+        # 5. จำแนกผลลัพธ์ — ใช้ระบบตรวจจับที่รัดกุมขึ้น
+        resp_upper = response.upper()
+        # ถ้ามีคำว่า ATTACK / MALICIOUS / CRITICAL และไม่มีคำว่า NORMAL/NO ATTACK ปนอยู่
         is_attack = (
-            "ATTACK" in response.upper() or
-            "MALICIOUS" in response.upper() or
-            "CRITICAL" in response.upper() or
-            "LABEL: 1" in response.upper() or
-            "VERDICT: 1" in response.upper() or
-            "CLASSIFICATION: 1" in response.upper()
-        )
+            ("ATTACK" in resp_upper or "MALICIOUS" in resp_upper or "CRITICAL" in resp_upper) and
+            ("NORMAL" not in resp_upper and "NO ATTACK" not in resp_upper)
+        ) or "LABEL: 1" in resp_upper or "VERDICT: 1" in resp_upper
         attack_type = _detect_attack_type(
             log_data.get('URL', ''), log_data.get('content', ''), response
         ) if is_attack else "Normal"

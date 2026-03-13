@@ -9,11 +9,13 @@ from trl import SFTTrainer
 from transformers import TrainingArguments
 from datasets import load_dataset, Dataset
 from huggingface_hub import login
-import json
+from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
 # ===== CONFIG =====
-HF_TOKEN = "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"
+HF_TOKEN = os.getenv("TOKEN")
 login(HF_TOKEN)
 
 MAX_SEQ_LENGTH = 1024   # ลดจาก 2048 -> 1024 เพื่อความเร็วสูงสุด (เป้าหมาย 1-3 ชม.)

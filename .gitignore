@@ -1,3 +1,5 @@
 .venv
 soc_llm_research/.venv
 soc_llm_research/.venv_wsl
+soc_llm_research/.env
+.venv_wsl

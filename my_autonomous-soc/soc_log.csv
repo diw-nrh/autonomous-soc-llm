@@ -152,3 +152,118 @@ This is a SQL injection attack using the OR operator to always return true, maki
 - Apply WAF rule to block this pattern
 - Review application code for vulnerability"
 2026-03-12 23:13:07,POST,http://127.0.0.1:8000/api/v1/login,,Normal,Normal,Normal traffic
+2026-03-13 15:30:02,GET,http://127.0.0.1:8000/api/v1/search?q=1%27%20OR%201=1,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**Malicious Traffic Detected**
+
+This is a SQL injection attack using the OR operator to always return true, making all records match the query.
+
+**Attack Vector:** SQL Injection
+
+**Severity:** Critical
+
+**Action Required:** Block source IP immediately"
+2026-03-13 15:30:49,GET,http://127.0.0.1:8000/room,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:31:18,GET,http://127.0.0.1:8000/api/v1/search?q=room,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:32:27,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,"**MALICIOUS TRAFFIC DETECTED**
+
+Attack Type: XSS
+Severity: CRITICAL
+
+**Reason:** XSS on autofocus attribute with alert payload
+
+**Action Required:** Block immediately + Escalation to Tier 2 SOC Analyst"
+2026-03-13 15:34:11,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"## Security Analysis
+
+**Malicious Activity Detected**
+
+This API log contains a potential SQL injection attack.
+
+**Attack Vector:** SQL Injection - Blind SQL Injection
+
+**Severity:** CRITICAL
+
+**Action Required:** Block all incoming traffic from this IP address immediately. Perform a full-distribution scan for related threat indicators."
+2026-03-13 15:36:05,GET,http://127.0.0.1:8000/old,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**Security Analysis**
+
+**Malicious Activity Detected**
+-------------------------
+
+This is a classic case of **Old File Exploit**: The attacker attempts to access an old file on the server, which can lead to information disclosure, data theft, and system compromise.
+
+**Attack Vector**
+----------------
+
+* SQL Injection: No SQLi attack detected
+* XSS: No XSS payload found
+* XXE: No XML"
+2026-03-13 15:45:58,GET,http://127.0.0.1:8000/service/status,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:46:50,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:36,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:37,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:37,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:37,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:37,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:38,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:38,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:38,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:39,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:39,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:39,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:40,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:40,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:40,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:40,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:41,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:41,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:41,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:42,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:42,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:42,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:42,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:43,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:43,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:43,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:44,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:47:44,GET,http://127.0.0.1:8000/service,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 15:49:45,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"ATTACK: SQL Injection
+Malicious payload found in query parameter 'admin' - SQL injection technique used to inject malicious code"
+2026-03-13 15:49:54,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"ATTACK: SQL Injection
+Malicious payload found in query parameter 'admin' - SQL injection technique used to inject malicious code"
+2026-03-13 15:49:56,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"ATTACK: SQL Injection
+Malicious payload found in query parameter 'admin' - SQL injection technique used to inject malicious code"
+2026-03-13 15:49:59,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"ATTACK: SQL Injection
+Malicious payload found in query parameter 'admin' - SQL injection technique used to inject malicious code"
+2026-03-13 15:50:02,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"ATTACK: SQL Injection
+Malicious payload found in query parameter 'admin' - SQL injection technique used to inject malicious code"
+2026-03-13 15:50:04,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"ATTACK: SQL Injection
+Malicious payload found in query parameter 'admin' - SQL injection technique used to inject malicious code"
+2026-03-13 15:50:07,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"ATTACK: SQL Injection
+Malicious payload found in query parameter 'admin' - SQL injection technique used to inject malicious code"
+2026-03-13 15:50:09,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"ATTACK: SQL Injection
+Malicious payload found in query parameter 'admin' - SQL injection technique used to inject malicious code"
+2026-03-13 15:51:50,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS onfocus=alert(1)//
+2026-03-13 15:51:53,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS onfocus=alert(1)//
+2026-03-13 15:52:42,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS onfocus=alert(1)//
+2026-03-13 15:53:49,GET,http://127.0.0.1:8000/api/v1/search?q=%3Cx%20onclick%3Dalert%281%29%3Eclick%20this,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS on Clickjacking — injects alert() function
+2026-03-13 15:54:26,POST,http://127.0.0.1:8000/api/v1/login,,ALERT,SQLi,ATTACK: SQL Injection — Group By Malicious Payload
+2026-03-13 15:55:13,POST,http://127.0.0.1:8000/api/v1/login,,ALERT,SQLi,ATTACK: SQL Injection — Group By Malicious Payload
+2026-03-13 15:55:27,POST,http://127.0.0.1:8000/api/v1/login,,Normal,Normal,"ATTACK: SQL Injection
+Normal traffic"
+2026-03-13 15:56:06,POST,http://127.0.0.1:8000/api/v1/login,,ALERT,SQLi,ATTACK: SQL Injection — Double Click Malware
+2026-03-13 15:57:07,GET,http://127.0.0.1:8000/api/v1/search?q=%3Cx%20onclick%3Dalert%281%29%3Eclick%20this%21,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS on Chrome 145.0.0.0 — Malicious script execution
+2026-03-13 15:58:51,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E%3Croot%3E%26foo%3B%3C/root%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS on XML entity injection
+2026-03-13 16:01:26,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E%3Croot%3E%26foo%3B%3C/root%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS on XML entity injection
+2026-03-13 16:06:06,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E%3Croot%3E%26foo%3B%3C/root%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,ATTACK: XXE
+2026-03-13 16:06:59,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS
+2026-03-13 16:07:06,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS
+2026-03-13 16:07:06,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS
+2026-03-13 16:07:06,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS
+2026-03-13 16:07:07,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS
+2026-03-13 16:07:07,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS
+2026-03-13 16:07:08,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS
+2026-03-13 16:07:08,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS
+2026-03-13 16:07:09,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS
+2026-03-13 16:07:09,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XSS,ATTACK: XSS
+2026-03-13 16:07:41,GET,http://127.0.0.1:8000/api/v1/search?q=room1,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 16:07:43,GET,http://127.0.0.1:8000/api/v1/search?q=room1,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 16:07:43,GET,http://127.0.0.1:8000/api/v1/search?q=room1,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 16:07:44,GET,http://127.0.0.1:8000/api/v1/search?q=room1,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
