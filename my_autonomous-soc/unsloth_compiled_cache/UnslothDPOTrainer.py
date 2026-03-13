@@ -1,6 +1,6 @@
 """
-2026.3.1
-2026.3.3
+2026.3.2
+2026.3.4
 5.2.0
 0.24.0
 __UNSLOTH_VERSIONING__
@@ -656,8 +656,8 @@ class UnslothDPOConfig(DPOConfig):
         padding_value = None,
         vllm_sampling_params = None,
         unsloth_num_chunks = -1,
-        unsloth_logit_chunk_multiplier = None, 
-        unsloth_grpo_mini_batch = None, 
+        unsloth_logit_chunk_multiplier = None,
+        unsloth_grpo_mini_batch = None,
         max_seq_length = None,
         **kwargs,
     ):
