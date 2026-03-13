@@ -270,3 +270,76 @@ Remediation: Block source IP immediately & escalate to Tier 2 SOC analyst"
 2026-03-13 21:20:06,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
 2026-03-13 21:20:06,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
 2026-03-13 21:20:06,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 21:54:30,GET,http://127.0.0.1:8000/' or 0=0 –,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,"**ATTACK DETECTED**
+
+Classification: SQLi
+Severity: Critical
+Explanation: SQL injection in URL parameter
+Remediation: Block source IP immediately
+
+Status Code: 500 Internal Server Error"
+2026-03-13 21:54:40,GET,http://127.0.0.1:8000/hi,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 22:06:28,GET,http://127.0.0.1:8000/hi,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,Normal,Normal,[Passed Heuristic — Safe]
+2026-03-13 22:06:37,GET,http://127.0.0.1:8000/api/v1/download,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,Normal,Normal,[Passed Heuristic — Safe]
+2026-03-13 22:06:40,GET,http://127.0.0.1:8000/api/v1/download,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,Normal,Normal,[Passed Heuristic — Safe]
+2026-03-13 22:07:43,GET,http://127.0.0.1:8000/api/v1/search?q=1%27%20OR%201=1,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",SQLi,ALERT,SQLi,"**Attack Confirmed**
+
+Classification: SQLi
+Severity: Critical
+Explanation: SQL injection attempt using 'or' condition always evaluates to true
+Remediation: Block source IP immediately"
+2026-03-13 22:08:09,GET,http://127.0.0.1:8000/wan/woman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,Normal,Normal,[Passed Heuristic — Safe]
+2026-03-13 22:09:47,GET,http://127.0.0.1:8000/api/v1/search?q=wuman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,Normal,Normal,[Passed Heuristic — Safe]
+2026-03-13 22:11:23,GET,"http://127.0.0.1:8000/api/v1/search?q=""autofocus/onfocus=alert(1)//","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",XSS,ALERT,XSS,"**CONFIRM**
+Attack Found
+Classification: XSS
+Severity: Critical
+Explanation: Malicious reflected XSS on autofocus attribute
+Remediation: Block source IP + Escalation"
+2026-03-13 22:13:29,GET,http://127.0.0.1:8000/api/v1/search?q=%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3Cfoo%3E%3C%21%5BCDATA%5B%3C%5D%5D%3ESCRIPT%3C%21%5BCDATA%5B%3E%5D%5D%3Ealert%281%29%3B%3C%21%5BCDATA%5B%3C%5D%5D%3E/SCRIPT%3C%21%5BCDATA%5B%3E%5D%5D%3E%3C/foo%3E,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",XSS,ALERT,XSS,"Attack — Malicious Scripting
+Classification: XSS
+Severity: Critical
+Explanation: Repeated XSS attempts using XML entities for script injection
+Remediation: Block source IP immediately"
+2026-03-13 22:14:30,GET,http://127.0.0.1:8000/api/v1/search?q=%0A%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E%0A,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,Normal,Normal,[Passed Heuristic — Safe]
+2026-03-13 22:18:36,GET,http://127.0.0.1:8000/api/v1/search?q=%0A%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E%0A,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,2,High special-char ratio (25.2%),ALERT,RCE,"**CONFIRM**
+Attack detected: Advanced Obfuscation
+Classification: Malicious Traffic
+Severity: Critical
+
+Explanation: Advanced obfuscation techniques used to evade detection
+Remediation: Block source IP immediately"
+2026-03-13 22:19:43,GET,http://127.0.0.1:8000/api/v1/search?q=mama/don'tcry,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,2,High special-char ratio (27.5%),Normal,Normal (FP dismissed),"**CONFIRM**
+Normal traffic — False Positive
+Entire request matches benign pattern"
+2026-03-13 22:21:27,GET,http://127.0.0.1:8000/api/v1/search?q=admin%27/%2A%2A/%27%7C%7C%27or%27%7C%7C%27/%2A%2A/%271%27%3D%271,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,2,High special-char ratio (32.4%),ALERT,SQLi,"**CONFIRM**
+Type: SQL Injection
+Severity: Critical
+Explanation: Malicious payload detected in URL parameters
+Remediation: Block source IP immediately"
+2026-03-13 22:22:05,GET,http://127.0.0.1:8000/api/v1/search?q=\'-alert(1)//,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",XSS,1,Regex matched: XSS,ALERT,XSS,"**CLASSIFICATION**: XSS
+**SEVERITY**: Critical
+**EXPLANATION**: Malicious XSS attempt using encoded payload
+**REMEDIATION**: Block source IP immediately"
+2026-03-13 22:23:15,GET,http://127.0.0.1:8000/api/v1/search?q=%0A%3C%21%5BCDATA%5B%3Cscript%3Evar%20n%3D0%3Bwhile%28true%29%7Bn%2B%2B%3B%7D%3C/script%3E%5D%5D%3E%0A,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",XSS,1,Regex matched: XSS,ALERT,XSS,"Attack detected
+Classification: XSS
+Severity: Critical
+Explanation: Malicious script embedded in XML data
+Remediation: Block source IP + rate limit + escalate to Tier 2 analyst"
+2026-03-13 22:25:12,GET,http://127.0.0.1:8000/api/v1/search?q=%0A%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22ISO-8859-1%22%3F%3E%3C%21DOCTYPE%20xxe%20%5B%3C%21ENTITY%20foo%20%22aaaaaa%22%3E%5D%3E%0A,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,2,High special-char ratio (23.0%),ALERT,RCE,"**CONFIRM**
+Type: Malware Detection
+Severity: Critical
+Explanation: Advanced obfuscation techniques used to evade detection
+Remediation: Block source IP immediately"
+2026-03-13 22:25:52,GET,http://127.0.0.1:8000/wan/woman,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,2,High special-char ratio (29.0%),Normal,Normal (FP dismissed),Normal traffic — False Positive
+2026-03-13 22:26:15,GET,http://127.0.0.1:8000/wan/ไำไำ,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,2,High special-char ratio (30.0%),ALERT,Suspicious,"**CONFIRM**
+Type: Malware
+Severity: Critical
+Explanation: Obfuscated payload in WAN link
+Remediation: Block all WAN links"
+2026-03-13 22:27:14,GET,http://127.0.0.1:8000/wan/ไำไำ,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,2,High special-char ratio (30.0%),ALERT,Suspicious,"**CONFIRM**
+Type: Malware
+Severity: Critical
+Explanation: Obfuscated payload in WAN link
+Remediation: Block all WAN links"
+2026-03-13 22:27:22,GET,http://127.0.0.1:8000/wan/lalalulu,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",-,2,High special-char ratio (26.5%),Normal,Normal (FP dismissed),Normal traffic — False Positive

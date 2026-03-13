@@ -1,7 +1,9 @@
 import urllib.parse
 
 # 1. วาง Payload ที่คุณต้องการแปลงในนี้ (ใส่เป็น String)
-xxe_payload = '<?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE xxe [<!ENTITY foo "aaaaaa">]>'
+xxe_payload = """
+<?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE xxe [<!ENTITY foo "aaaaaa">]>
+"""
 
 # 2. ใช้ฟังก์ชัน quote() เพื่อทำการ URL Encode
 encoded_payload = urllib.parse.quote(xxe_payload)
