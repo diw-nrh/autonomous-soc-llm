@@ -174,17 +174,24 @@ class SOCAgent:
             except Exception:
                 pass
 
-        # 3. Prompt - ปรับปรุงให้ AI ตอบสั้นและชัดเจนขึ้น เพื่อลดการพล่ามจนเกิด False Positive
-        prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-You are an expert SOC analyst specialized in detecting API attacks (SQLi, XSS, XXE, RCE, Brute Force).
+        # 3. Prompt - ปรับปรุงให้ AI ตอบละเอียดขึ้นตามที่เทรนมา
+        system_prompt = """You are an expert SOC (Security Operations Center) analyst specialized in:
+- SQL Injection (SQLi) detection: classic, blind, UNION-based, error-based, time-based, stacked queries
+- XXE (XML External Entity) injection detection: file disclosure, SSRF, OOB, DoS
+- XSS (Cross-Site Scripting) detection: reflected, stored, DOM-based, obfuscated
+- Remote Code Execution (RCE) and Command Injection detection
+- Path Traversal and Local File Inclusion (LFI) detection
+- OWASP Top 10 threat identification
+
+Analyze logs with precision. Always provide: attack classification, severity (CRITICAL/HIGH/MEDIUM/LOW/INFO), technical explanation, IoCs, and remediation steps.
 RULES:
-1. If the log is harmless traffic (e.g. simple paths like /service, /old, /home), you MUST respond with "Normal traffic" and nothing else.
-2. If an attack is detected, start your response with "ATTACK: [Type]" followed by a brief analysis. 
-   Examples: "ATTACK: XXE", "ATTACK: SQLi", "ATTACK: XSS".
-3. Be strict: ignore common symbols unless they form a logical attack payload.
-4. Distinguish between XXE (XML attacks) and Path Traversal (attempts to access system files like /etc/passwd). If a URL contains /etc/passwd or ../, it is Path Traversal, NOT XXE.
-{context}
-<|eot_id|><|start_header_id|>user<|end_header_id|>
+1. If the log is harmless traffic, respond with "Normal traffic" and nothing else.
+2. If an attack is detected, you MUST provide a detailed security analysis report.
+3. Distinguish between XXE and Path Traversal. /etc/passwd is Path Traversal.
+"""
+        prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+{system_prompt}
+{context}<|eot_id|><|start_header_id|>user<|end_header_id|>
 ### Task:
 Analyze this API log:
 {log_text}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
@@ -195,8 +202,9 @@ Analyze this API log:
             with torch.no_grad():
                 outputs = self.model.generate(
                     **inputs,
-                    max_new_tokens=80,
-                    do_sample=False,         # Greedy decoding — เสถียร + แม่นยำ
+                    max_new_tokens=300,
+                    do_sample=True,
+                    temperature=0.1,
                     pad_token_id=self.tokenizer.eos_token_id,
                     repetition_penalty=1.1,
                 )
