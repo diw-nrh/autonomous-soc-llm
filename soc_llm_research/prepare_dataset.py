@@ -2,6 +2,7 @@
 import pandas as pd
 import json
 import os
+import random
 
 def prepare_data():
     csv_path = "data/csic_database.csv"
@@ -31,7 +32,6 @@ def prepare_data():
         }
         dataset.append(entry)
 
-    import random
     random.seed(42)
     random.shuffle(dataset)
     split_idx = int(len(dataset) * 0.9)

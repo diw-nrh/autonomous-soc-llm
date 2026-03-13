@@ -3,7 +3,6 @@ import pandas as pd
 from engine import ModelLoader, analyze_log, clean_log, SOCVectorStore
 from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
-import os
 
 def main():
     # 1. โหลดโมเดล (VRAM 2.1 GB)

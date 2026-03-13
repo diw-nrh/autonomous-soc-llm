@@ -5,4 +5,4 @@ soc_llm_research/.env
 .venv_wsl
 my_autonomous-soc/.venv_wsl_web
 my_autonomous-soc/engine/__pycache__
-my_autonomous-soc/engine/soc_log.csv
+my_autonomous-soc/soc_log.csv

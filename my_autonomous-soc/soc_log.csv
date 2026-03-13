@@ -1,2 +1,9 @@
 timestamp,method,url,user_agent,status,attack_type,ai_analysis
 2026-03-12 20:47:13,GET,http://localhost:8000/dashboard,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 18:21:44,GET,http://127.0.0.1:8000/api/v1/search?q=1%27%20OR%201=1,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,ATTACK: SQLi
+2026-03-13 18:22:45,GET,http://127.0.0.1:8000/api/v1/search?q=1%27%20OR%201=1,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,SQLi,ATTACK: SQLi
+2026-03-13 18:22:51,GET,http://127.0.0.1:8000/api/v1/download,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic
+2026-03-13 18:23:33,GET,http://127.0.0.1:8000/api/v1/download/etc/passwd,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,ATTACK: XXE
+2026-03-13 18:23:48,GET,http://127.0.0.1:8000/api/v1/etc/passwd,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,ATTACK: XXE
+2026-03-13 18:24:31,GET,http://127.0.0.1:8000/api/v1/etc/passwd,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",ALERT,XXE,ATTACK: XXE
+2026-03-13 18:24:58,GET,http://127.0.0.1:8000/ww,"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Sa",Normal,Normal,Normal traffic

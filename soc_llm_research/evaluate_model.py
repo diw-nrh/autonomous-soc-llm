@@ -6,7 +6,6 @@
 
 import json
 import torch
-import numpy as np
 import time
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, confusion_matrix, classification_report

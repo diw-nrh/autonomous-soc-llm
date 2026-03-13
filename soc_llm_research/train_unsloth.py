@@ -1,8 +1,3 @@
-"""
-🔐 SOC Security Log Detection Training Script
-โมเดลสำหรับตรวจจับ SQLi, XXE, XSS และภัยคุกคามทางไซเบอร์
-"""
-
 from unsloth import FastLanguageModel
 import torch
 from trl import SFTTrainer
@@ -132,7 +127,17 @@ Content-Type: application/xml
         ("GET /test?x=<svg/onload=eval(atob('YWxlcnQoMSk='))> HTTP/1.1", "HIGH", "XSS-Obfuscated",
          "Obfuscated XSS: base64-encoded payload in SVG onload event — evades signature-based detection"),
     ]
+    # ─── RCE / Command Injection ─────────────────────────────────────────────
+    rce_logs = [
+        ("GET /ping?host=8.8.8.8;cat /etc/shadow HTTP/1.1", "CRITICAL", "RCE-CmdInjection",
+         "Command Injection: semicolon chaining executes 'cat /etc/shadow' — reads hashed system passwords"),
 
+        ("GET /process?file=../../etc/passwd HTTP/1.1", "HIGH", "PathTraversal",
+         "Path Traversal: ../ sequences escape web root to read /etc/passwd — directory traversal attack"),
+
+        ("POST /api/eval HTTP/1.1\nbody=__import__('os').system('id')", "CRITICAL", "RCE-Python",
+         "Python RCE: __import__('os').system() executes arbitrary OS commands — critical remote code execution"),
+    ]
     # ─── Log Analysis (multi-line) ────────────────────────────────────────────
     log_analysis_samples = [
         {
@@ -238,7 +243,7 @@ Content-Type: application/xml
     ]
 
     # ─── Build dataset from attack patterns ──────────────────────────────────
-    all_attacks = sqli_logs + xxe_logs + xss_logs
+    all_attacks = sqli_logs + xxe_logs + xss_logs + rce_logs
 
     for log_entry, severity, attack_type, explanation in all_attacks:
         # Format 1: Single log line analysis

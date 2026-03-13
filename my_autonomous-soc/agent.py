@@ -42,23 +42,35 @@ def _detect_attack_type(url: str, content: str, ai_response: str) -> str:
     """ตรวจจับประเภทการโจมตีจาก URL, Content และคำตอบของ AI (พร้อมระบบกัน False Positive)"""
     resp_upper = ai_response.upper()
     
-    # ถ้า AI บอกชัดเจนว่าปกติ ไม่ต้องพยายามหา Keyword การโจมตี
+    # หรือถ้า AI บอกชัดเจนว่าปกติ ไม่ต้องพยายามหา Keyword การโจมตี
     if "NORMAL" in resp_upper or "NO ATTACK" in resp_upper or "LEGITIMATE" in resp_upper:
         return "Normal"
 
     text = (url + " " + content + " " + ai_response).upper()
+    
+    # 1. Path Traversal / LFI (ตรวจสอบก่อนเพราะมักจะโดนไปรวมกับ XXE/RCE)
+    if "/ETC/PASSWD" in text or "../" in url or "..%2F" in url or "TRAVERSAL" in resp_upper:
+        return "Path Traversal"
+
+    # 2. SQL Injection
     if "SQLI" in text or "SQL INJECTION" in text or "UNION SELECT" in text or "OR 1=1" in text or "%27" in url:
         return "SQLi"
+    
+    # 3. XML External Entity (XXE)
     elif "XXE" in text or "XML EXTERNAL" in text or "DOCTYPE" in text or "ENTITY" in text:
         return "XXE"
+    
+    # 4. Cross-Site Scripting (XSS)
     elif "XSS" in text or "CROSS-SITE" in text or "<SCRIPT" in text.replace("%3C","<"):
         return "XSS"
-    elif "RCE" in text or "COMMAND INJECTION" in text or "REMOTE CODE" in text or "/ETC/PASSWD" in text:
-        return "Suspicious"
-    elif "PATH TRAVERSAL" in text or "DIRECTORY TRAVERSAL" in text or "../" in url or "..%2F" in url:
-        return "Path Traversal"
+    
+    # 5. Remote Code Execution (RCE) / Suspect
+    elif "RCE" in text or "COMMAND INJECTION" in text or "REMOTE CODE" in text:
+        return "RCE"
+    
     elif "ATTACK" in text or "MALICIOUS" in text or "INJECTION" in text:
         return "Other Attack"
+    
     return "Normal"
 
 
@@ -170,6 +182,7 @@ RULES:
 2. If an attack is detected, start your response with "ATTACK: [Type]" followed by a brief analysis. 
    Examples: "ATTACK: XXE", "ATTACK: SQLi", "ATTACK: XSS".
 3. Be strict: ignore common symbols unless they form a logical attack payload.
+4. Distinguish between XXE (XML attacks) and Path Traversal (attempts to access system files like /etc/passwd). If a URL contains /etc/passwd or ../, it is Path Traversal, NOT XXE.
 {context}
 <|eot_id|><|start_header_id|>user<|end_header_id|>
 ### Task:
